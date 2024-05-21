@@ -16,7 +16,8 @@ that are allowed by the El Torito standard.
 The imagedata are written to STDOUT all other information is written to
 STDERR (eg type and size of image).
 If you want to write the image to a file instead of STDOUT you can
-secify the filename wanted on the commandline using option -o <filename>
+specify the filename wanted on the commandline using option -o <filename>
+or use shell io redirections ("geteltorito ... > file")
 
 Rainer Krienke
 krienke@uni-koblenz.de
