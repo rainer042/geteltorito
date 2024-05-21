@@ -2,7 +2,7 @@ Author: Rainer Krienke
 Email:  krienke@uni-koblenz.de
 License: GPL
 Version: 0.4
-Description: A El Torito boot image extractor
+Description: An El Torito boot image extractor
 
 call:   geteltorito CD-image > toritoimagefile
 example:geteltorito /dev/sr0  > /tmp/bootimage
