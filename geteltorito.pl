@@ -11,10 +11,23 @@ use Getopt::Std;
 # License: GPL
 #
 # Get latest version from:
-# http://www.uni-koblenz.de/~krienke/ftp/noarch/geteltorito
+# http://userpages.uni-koblenz.de/~krienke/ftp/noarch/geteltorito
 #
-$utilVersion="0.4"; 
+$utilVersion="0.6"; 
 #
+# Version 0.6
+#    2015/02/25
+#    I included a patch by Daniel Kekez, daniel.kekez@utoronto.ca to make geteltorito
+#    better compatible with windows:
+#       "To run this Perl script using using Strawberry Perl under Windows, I
+#       found it was necessary to explicitly open the files in binary mode since
+#       Windows will default to text mode when open() is called."
+# Version 0.5
+#    2009/06/22
+#    A patch for harddisk emulation images from <colimit@gmail.com>.
+#    For BootMediaType=4 (harddisk emulation) SectorCount is always 1, and geteltorito.pl
+#    returns just MBR. This patch guesses the correct bootimage size
+#    from MBR (offset+size of the first partitition).
 # Version 0.4
 #    2007/02/01
 #    A patch from Santiago Garcia <manty@debian.org> to use a virtual sector
@@ -31,9 +44,7 @@ $utilVersion="0.4";
 #    Initial release
 #
 # For information on El Torito see 
-# http://wikipedia.org/
-# or try this link directly:
-# http://www.phoenix.com/en/Customer+Services/White+Papers-Specs/Platform+System+Software+Documents/default.htm
+# http://en.wikipedia.org/wiki/El_torito
 
 $vSecSize=512;
 $secSize=2048;
@@ -47,7 +58,7 @@ sub getSector{
    my ($secNum, $secCount, $file)=@_;
    my ($sec, $count);
 
-   open(FILE, $file) || die "Cannot open \"$file\" \n";
+   open(FILE, "<:raw", $file) || die "Cannot open \"$file\" \n";
 
    seek(FILE, $secNum*$secSize, 0);
    $count=read(FILE, $sec, $vSecSize*$secCount, 0) ;
@@ -67,7 +78,7 @@ sub writeOutputFile{
    my($name)=shift;
    my($value)=shift;
 
-   open(OUT, ">".$name)|| die "$0: Cannot open outputfile \"$name\" for writing. Stop.";
+   open(OUT, ">:raw", $name)|| die "$0: Cannot open outputfile \"$name\" for writing. Stop.";
    print OUT $value;
    close(OUT);
 }
@@ -179,19 +190,22 @@ if( $media == 0 ){
 }
 if( $media == 1 ){
 	print STDERR "1.2meg floppy";
-       $count=1200*1024/$vSecSize;  
+        $count=1200*1024/$vSecSize;  
 }
 if( $media == 2 ){
 	print STDERR "1.44meg floppy";
-       $count=1440*1024/$vSecSize;  
+        $count=1440*1024/$vSecSize;  
 }
 if( $media == 3 ){
 	print STDERR "2.88meg floppy";
-       $count=2880*1024/$vSecSize;  
+        $count=2880*1024/$vSecSize;  
 }
 if( $media == 4 ){
 	print STDERR "harddisk";
-	$count=0;
+	$MBR=getSector($imgStart, 1, $imageFile );
+	$partition1=substr($MBR, 446, 16);
+	($unUsed, $firstSector, $partitionSize) = unpack( "A8VV", $partition1);
+	$count=$firstSector + $partitionSize;
 }
 print STDERR "\n";
 
