@@ -11,7 +11,7 @@ use Getopt::Std;
 # License: GPL
 #
 # Get latest version from:
-# http://userpages.uni-koblenz.de/~krienke/ftp/noarch/geteltorito
+# https://github.com/rainer042/geteltorito
 #
 $utilVersion="0.6"; 
 #
