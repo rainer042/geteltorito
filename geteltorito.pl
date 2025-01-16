@@ -8,7 +8,7 @@ use Getopt::Std;
 # bootable CD image
 # R. Krienke 08/2001
 # krienke@uni-koblenz.de
-# License: GPL
+# License: GPL V3
 #
 # Get latest version from:
 # https://github.com/rainer042/geteltorito
